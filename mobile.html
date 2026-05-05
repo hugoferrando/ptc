@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Atelier PTC</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f2ff;
+  --surface: #ffffff;
+  --border: rgba(100,80,200,0.12);
+  --text: #1a1230;
+  --muted: #6b6490;
+  --faint: #b0aac8;
+
+  --purple: #6c3fcf;
+  --purple-bg: #ede8ff;
+  --red: #d93025;
+  --red-bg: #fff0ef;
+  --green: #1a7f4b;
+  --green-bg: #eafaf1;
+  --orange: #c85000;
+  --orange-bg: #fff4ea;
+  --blue: #1558b0;
+  --blue-light: #4a90e2;
+  --blue-bg: #eaf2ff;
+
+  --nav-h: 68px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PAGES ── */
+.pages {
+  position: fixed; inset: 0;
+  bottom: var(--nav-h);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.page { display: none; padding: 20px 18px 32px; min-height: 100%; }
+.page.active { display: block; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4px 20px rgba(100,80,200,0.08);
+}
+
+.nav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer; transition: all 0.2s;
+  border: none; background: none; padding: 8px 4px;
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-tab-icon {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all 0.2s;
+  background: transparent;
+}
+
+.nav-tab.active .nav-tab-icon { background: var(--purple-bg); }
+.nav-tab-label { font-size: 10px; font-weight: 500; color: var(--faint); transition: color 0.2s; line-height: 1; }
+.nav-tab.active .nav-tab-label { color: var(--purple); font-weight: 600; }
+
+/* ── HERO PAGE ── */
+.hero-page {
+  background: linear-gradient(160deg, #fff 30%, var(--purple-bg) 100%);
+  min-height: 100%;
+}
+
+.hero-badge {
+  display: inline-block; font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--purple);
+  background: var(--purple-bg); padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(108,63,207,0.2); margin-bottom: 16px;
+}
+
+.hero-title {
+  font-family: var(--font-display); font-size: 30px; font-weight: 800;
+  line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px;
+}
+.hero-title span { color: var(--purple); }
+
+.hero-sub { font-size: 14px; color: var(--muted); font-weight: 300; margin-bottom: 24px; line-height: 1.7; }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--surface); border-radius: 14px; border: 1px solid var(--border);
+  padding: 14px 16px;
+}
+.stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--purple); line-height: 1; }
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.timeline { display: flex; height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 20px; }
+.tl-1 { background: var(--purple); flex: 4; }
+.tl-2 { background: var(--red); flex: 7; }
+.tl-3 { background: var(--green); flex: 8; }
+.tl-4 { background: var(--blue-light); flex: 2; }
+
+.phases-list { display: flex; flex-direction: column; gap: 10px; }
+.phase-row {
+  background: var(--surface); border-radius: 14px; border: 1px solid var(--border);
+  padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+}
+.phase-row:active { transform: scale(0.98); }
+.phase-dot { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 16px; font-weight: 800; flex-shrink: 0; }
+.phase-info { flex: 1; }
+.phase-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+.phase-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.phase-arrow { color: var(--faint); font-size: 14px; }
+
+/* ── SECTION PAGES ── */
+.page-header { margin-bottom: 22px; }
+.page-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+.page-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+.page-desc { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.65; }
+
+.pills-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.pill { font-size: 10px; font-weight: 500; padding: 4px 10px; border-radius: 20px; border: 1px solid; }
+.pill-purple { color: var(--purple); background: var(--purple-bg); border-color: rgba(108,63,207,0.25); }
+.pill-red    { color: var(--red);    background: var(--red-bg);    border-color: rgba(217,48,37,0.2); }
+.pill-green  { color: var(--green);  background: var(--green-bg);  border-color: rgba(26,127,75,0.2); }
+.pill-blue   { color: var(--blue);   background: var(--blue-bg);   border-color: rgba(21,88,176,0.2); }
+
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* ── QUIZ CARDS ── */
+.quiz-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.quiz-card:active { transform: scale(0.99); }
+.quiz-q-num { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--purple); text-transform: uppercase; margin-bottom: 8px; }
+.quiz-q-text { font-size: 15px; font-weight: 500; line-height: 1.5; }
+.quiz-reveal { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); display: none; }
+.quiz-reveal.shown { display: block; }
+.quiz-answer { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
+.quiz-hint { font-size: 10px; color: var(--faint); margin-top: 8px; text-align: right; font-style: italic; }
+
+.conseil-box { background: var(--purple-bg); border-radius: 12px; border: 1px solid rgba(108,63,207,0.2); padding: 14px 16px; margin-top: 4px; }
+.conseil-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--purple); margin-bottom: 6px; }
+.conseil-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── SLIDESHOW ── */
+.slideshow { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(108,63,207,0.08); }
+
+.slide { display: none; flex-direction: column; }
+.slide.active { display: flex; }
+@keyframes sIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
+.slide.active { animation: sIn 0.25s ease both; }
+
+.slide-visual { display: flex; align-items: center; justify-content: center; padding: 24px 20px; }
+.slide-1-bg { background: linear-gradient(135deg, #fff8f0, #ffe8d0); }
+.slide-2-bg { background: linear-gradient(135deg, #fff0ef, #ffdbd9); }
+.slide-3-bg { background: linear-gradient(135deg, #f0f8ff, #d6eaff); }
+
+.slide-content { padding: 18px 20px 20px; }
+.slide-step { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 10px; }
+.slide-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 1.15; margin-bottom: 12px; }
+.slide-text { font-size: 14px; line-height: 1.75; color: var(--muted); font-weight: 300; }
+.slide-text strong { color: var(--text); font-weight: 600; }
+
+.slide-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); background: #fafafa; }
+.slide-btn { font-family: var(--font-display); font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+.slide-btn:active:not(:disabled) { background: var(--red); color: #fff; border-color: var(--red); }
+.slide-btn:disabled { opacity: 0.3; }
+.slide-dots { display: flex; gap: 6px; align-items: center; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); border: none; cursor: pointer; transition: all 0.2s; padding: 0; }
+.dot.active { background: var(--red); width: 18px; border-radius: 4px; }
+.slide-counter { font-family: var(--font-display); font-size: 11px; color: var(--muted); font-weight: 600; }
+
+/* ── VF CARDS ── */
+.section-label { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.section-sublabel { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+
+.vf-card {
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 16px 16px 36px; margin-bottom: 10px; cursor: pointer; position: relative;
+  transition: all 0.22s; -webkit-tap-highlight-color: transparent;
+}
+.vf-card:active { transform: scale(0.99); }
+.vf-card::after { content: 'Toucher pour voir la réponse ↓'; position: absolute; bottom: 10px; right: 14px; font-size: 10px; color: var(--faint); font-style: italic; }
+.vf-card.revealed::after { content: 'Toucher pour masquer ↑'; }
+.vf-statement { font-size: 14px; font-weight: 500; line-height: 1.55; font-style: italic; }
+.vf-answer-block { display: none; margin-top: 12px; padding-top: 12px; border-top: 1.5px dashed var(--border); }
+.vf-answer-block.shown { display: block; }
+.vf-badge { display: inline-block; font-family: var(--font-display); font-size: 11px; font-weight: 800; letter-spacing: 0.1em; padding: 4px 12px; border-radius: 20px; margin-bottom: 8px; text-transform: uppercase; }
+.badge-faux { background: var(--red-bg); color: var(--red); border: 1.5px solid rgba(217,48,37,0.25); }
+.badge-vrai { background: var(--green-bg); color: var(--green); border: 1.5px solid rgba(26,127,75,0.25); }
+.vf-expl { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.vf-card.is-faux { background: var(--red-bg); border-color: rgba(217,48,37,0.3); }
+.vf-card.is-vrai { background: var(--green-bg); border-color: rgba(26,127,75,0.3); }
+
+/* ── SCENARIO ── */
+.scenario-box {
+  background: var(--surface); border: 1.5px solid rgba(26,127,75,0.3);
+  border-left: 5px solid var(--green); border-radius: 0 14px 14px 0;
+  padding: 18px 18px; margin-bottom: 16px;
+}
+.scenario-label-tag { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+.scenario-text { font-size: 15px; line-height: 1.8; font-style: italic; font-weight: 300; margin-bottom: 12px; }
+.scenario-cta { font-size: 13px; color: var(--green); font-weight: 500; }
+
+.reveal-btn {
+  width: 100%; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  padding: 12px 20px; border-radius: 10px; border: 1.5px solid rgba(26,127,75,0.4);
+  background: var(--green-bg); color: var(--green); cursor: pointer; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.reveal-btn:active { background: var(--green); color: #fff; }
+
+.scenario-answer { display: none; margin-top: 16px; border-top: 1.5px dashed rgba(26,127,75,0.3); padding-top: 16px; }
+.answer-header { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+.answer-intro { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.answer-body { background: var(--surface); border-radius: 12px; border: 1px solid rgba(26,127,75,0.2); padding: 16px; }
+.answer-title-q { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 10px; }
+.answer-p { font-size: 13px; color: var(--muted); line-height: 1.75; margin-bottom: 10px; }
+.answer-p strong { color: var(--text); font-weight: 600; }
+.answer-danger { background: var(--red-bg); border-radius: 8px; border: 1px solid rgba(217,48,37,0.2); padding: 12px 14px; margin-bottom: 10px; }
+.answer-danger-label { font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--red); letter-spacing: 0.08em; margin-bottom: 4px; }
+.answer-danger-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.answer-transition { background: var(--purple-bg); border-radius: 10px; border: 1px solid rgba(108,63,207,0.2); padding: 12px 14px; margin-top: 12px; }
+.answer-transition-label { font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--purple); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.answer-transition-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ── STEPS ── */
+.steps-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.step { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.step-n { width: 28px; height: 28px; border-radius: 8px; background: var(--green-bg); border: 1.5px solid rgba(26,127,75,0.3); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+.step-text { font-size: 13px; line-height: 1.6; color: var(--muted); padding-top: 3px; }
+.step-text strong { color: var(--text); font-weight: 600; }
+.step.danger .step-n { background: var(--red-bg); border-color: rgba(217,48,37,0.3); color: var(--red); }
+.step.danger .step-text { color: var(--red); }
+
+/* ── DISCUSSION ── */
+.disc-card { background: var(--surface); border: 1px solid rgba(26,127,75,0.2); border-top: 3px solid var(--green); border-radius: 0 0 14px 14px; padding: 14px 16px; margin-bottom: 10px; }
+.disc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+.disc-q { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1.35; margin-bottom: 6px; }
+.disc-hint { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+/* ── CLÔTURE ── */
+.postit { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 18px; margin-bottom: 10px; }
+.postit-num { font-family: var(--font-display); font-size: 30px; font-weight: 800; opacity: 0.1; line-height: 1; margin-bottom: 8px; }
+.postit-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.postit-text { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+/* ── RESSOURCES ── */
+.ressource-main { background: var(--green-bg); border: 1.5px solid rgba(26,127,75,0.3); border-radius: 16px; padding: 20px; margin-bottom: 12px; }
+.ressource-main-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.ressource-main-num { font-family: var(--font-display); font-size: 34px; font-weight: 800; color: var(--green); line-height: 1; margin-bottom: 6px; }
+.ressource-main-sub { font-size: 12px; color: var(--muted); }
+.ressource-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.ressource-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.ressource-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.ressource-num { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 1.2; margin-bottom: 3px; }
+.ressource-sub { font-size: 11px; color: var(--muted); }
+
+.materiel-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+.mat-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.mat-title { font-family: var(--font-display); font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.mat-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* scrollbar */
+::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ PAGES ══════════ -->
+<div class="pages" id="pages">
+
+  <!-- PAGE 0 : ACCUEIL -->
+  <div class="page hero-page active" id="page-0">
+    <div class="hero-badge">Service sanitaire — 5e année Pharmacie</div>
+    <div class="hero-title">Les nouvelles<br>drogues de <span>synthèse</span></div>
+    <p class="hero-sub">Cannabis synthétique, PTC, Spice, K2… Comprendre les dangers réels pour mieux s'en protéger.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">20 min</div><div class="stat-label">Durée totale</div></div>
+      <div class="stat-card"><div class="stat-num">~15</div><div class="stat-label">Participants</div></div>
+      <div class="stat-card"><div class="stat-num">100×</div><div class="stat-label">Plus puissant</div></div>
+      <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Phases</div></div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-1"></div><div class="tl-2"></div><div class="tl-3"></div><div class="tl-4"></div>
+    </div>
+
+    <div class="phases-list">
+      <div class="phase-row" onclick="goPage(1)">
+        <div class="phase-dot" style="background:var(--purple-bg);color:var(--purple);">1</div>
+        <div class="phase-info">
+          <div class="phase-name">Accroche — Quiz brise-glace</div>
+          <div class="phase-time">0 – 4 min</div>
+        </div>
+        <div class="phase-arrow">›</div>
+      </div>
+      <div class="phase-row" onclick="goPage(2)">
+        <div class="phase-dot" style="background:var(--red-bg);color:var(--red);">2</div>
+        <div class="phase-info">
+          <div class="phase-name">C'est quoi le PTC ?</div>
+          <div class="phase-time">4 – 11 min</div>
+        </div>
+        <div class="phase-arrow">›</div>
+      </div>
+      <div class="phase-row" onclick="goPage(3)">
+        <div class="phase-dot" style="background:var(--green-bg);color:var(--green);">3</div>
+        <div class="phase-info">
+          <div class="phase-name">Mise en situation</div>
+          <div class="phase-time">11 – 19 min</div>
+        </div>
+        <div class="phase-arrow">›</div>
+      </div>
+      <div class="phase-row" onclick="goPage(4)">
+        <div class="phase-dot" style="background:var(--blue-bg);color:var(--blue);">4</div>
+        <div class="phase-info">
+          <div class="phase-name">Clôture &amp; ressources</div>
+          <div class="phase-time">19 – 20 min</div>
+        </div>
+        <div class="phase-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 1 : QUIZ -->
+  <div class="page" id="page-1" style="background:linear-gradient(160deg,#fff 50%,var(--purple-bg) 100%);">
+    <div class="page-header">
+      <div class="page-eyebrow" style="color:var(--purple)">Phase 1 · 0 – 4 min</div>
+      <div class="page-title">Tu sais ce que tu prends ?</div>
+      <div class="page-desc">Quiz rapide pour briser la glace — ne pas corriger tout de suite, laisser le groupe répondre.</div>
+      <div class="pills-row">
+        <span class="pill pill-purple">Brise-glace</span>
+        <span class="pill pill-purple">Groupe entier</span>
+      </div>
+    </div>
+
+    <div class="quiz-card" onclick="toggleQuiz(this)">
+      <div class="quiz-q-num">Question 1</div>
+      <div class="quiz-q-text">Le CBD et le PTC, c'est la même chose ?</div>
+      <div class="quiz-reveal"><div class="quiz-answer">Non, pas du tout</div>Le CBD est naturel, légal, sans effet "planant". Le PTC est une substance chimique de synthèse, bien plus puissante et dangereuse.</div>
+      <div class="quiz-hint">Toucher pour révéler ▾</div>
+    </div>
+
+    <div class="quiz-card" onclick="toggleQuiz(this)">
+      <div class="quiz-q-num">Question 2</div>
+      <div class="quiz-q-text">Le cannabis de synthèse, c'est pareil que le cannabis naturel ?</div>
+      <div class="quiz-reveal"><div class="quiz-answer">Absolument pas</div>Rien en commun chimiquement. Les effets sont imprévisibles, jusqu'à 100× plus intenses. La composition change d'un sachet à l'autre.</div>
+      <div class="quiz-hint">Toucher pour révéler ▾</div>
+    </div>
+
+    <div class="quiz-card" onclick="toggleQuiz(this)">
+      <div class="quiz-q-num">Question 3</div>
+      <div class="quiz-q-text">Peut-on faire une overdose fatale avec du cannabis de synthèse ?</div>
+      <div class="quiz-reveal"><div class="quiz-answer">Oui — des décès documentés en France</div>Des cas de coma et décès ont été rapportés. Il n'existe pas d'antidote.</div>
+      <div class="quiz-hint">Toucher pour révéler ▾</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="conseil-box">
+      <div class="conseil-label">Conseil animateur</div>
+      <div class="conseil-text">Ne pas corriger immédiatement — noter les réponses et y revenir pendant la phase 2. Le but est de faire parler le groupe.</div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 : PTC + VF -->
+  <div class="page" id="page-2" style="background:linear-gradient(160deg,#fff 50%,var(--red-bg) 100%);">
+    <div class="page-header">
+      <div class="page-eyebrow" style="color:var(--red)">Phase 2 · 4 – 11 min</div>
+      <div class="page-title">C'est quoi le PTC ?</div>
+      <div class="page-desc">Exposé illustré en 3 points + activité cartes en groupes.</div>
+      <div class="pills-row">
+        <span class="pill pill-red">Diaporama</span>
+        <span class="pill pill-red">Activité cartes</span>
+      </div>
+    </div>
+
+    <!-- Slideshow -->
+    <div class="slideshow">
+      <div class="slide active" id="sl-1">
+        <div class="slide-visual slide-1-bg">
+          <svg width="200" height="170" viewBox="0 0 270 230" fill="none">
+            <path d="M108 55 L82 158 Q135 192 188 158 L162 55 Z" fill="#FFF3E0" stroke="#E65100" stroke-width="2.5" stroke-linejoin="round"/>
+            <rect x="108" y="46" width="54" height="14" rx="7" fill="#FFD9B3" stroke="#E65100" stroke-width="2"/>
+            <path d="M92 140 Q135 175 178 140 L162 55 L108 55 Z" fill="#FFCC80" opacity="0.5"/>
+            <circle cx="118" cy="130" r="7" fill="#FF8A50" opacity="0.55"/>
+            <circle cx="148" cy="148" r="5" fill="#FF8A50" opacity="0.45"/>
+            <circle cx="160" cy="118" r="9" fill="#FF8A50" opacity="0.38"/>
+            <text x="34" y="60" font-family="monospace" font-size="14" fill="#C85000" opacity="0.85" font-weight="bold">CH₃</text>
+            <text x="194" y="88" font-family="monospace" font-size="13" fill="#C85000" opacity="0.75">C₁₂H</text>
+            <ellipse cx="46" cy="162" rx="20" ry="11" fill="#8BC34A" opacity="0.75" transform="rotate(-28 46 162)"/>
+            <ellipse cx="224" cy="154" rx="18" ry="10" fill="#8BC34A" opacity="0.72" transform="rotate(22 224 154)"/>
+            <text x="135" y="215" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#C85000" font-weight="600">Substance chimique pulvérisée sur herbes</text>
+          </svg>
+        </div>
+        <div class="slide-content">
+          <div class="slide-step" style="color:var(--orange)">Point 01 / 03</div>
+          <div class="slide-title">Ce que c'est</div>
+          <div class="slide-text">Substances chimiques fabriquées <strong>en labo</strong>, pulvérisées sur herbes neutres. Vendues sous des noms trompeurs : <strong>Spice, K2, PTC…</strong> Rien à voir avec le cannabis naturel.</div>
+        </div>
+      </div>
+
+      <div class="slide" id="sl-2">
+        <div class="slide-visual slide-2-bg">
+          <svg width="200" height="170" viewBox="0 0 270 230" fill="none">
+            <rect x="32" y="78" width="74" height="96" rx="12" fill="#FFCDD2" stroke="#D93025" stroke-width="2"/>
+            <text x="69" y="110" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#B71C1C" font-weight="700">PTC</text>
+            <text x="69" y="164" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#D93025" font-weight="800">×1 ?</text>
+            <rect x="164" y="52" width="74" height="122" rx="12" fill="#FFCDD2" stroke="#D93025" stroke-width="2.5"/>
+            <text x="201" y="95" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#B71C1C" font-weight="700">PTC</text>
+            <rect x="178" y="105" width="44" height="6" rx="3" fill="#EF5350" opacity="0.9"/>
+            <rect x="178" y="117" width="44" height="6" rx="3" fill="#EF5350" opacity="0.88"/>
+            <rect x="178" y="129" width="44" height="6" rx="3" fill="#EF5350" opacity="0.85"/>
+            <text x="201" y="162" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#D93025" font-weight="800">×100 ??</text>
+            <polygon points="201,22 214,48 188,48" fill="#FF5252" opacity="0.92"/>
+            <text x="201" y="44" text-anchor="middle" font-family="sans-serif" font-size="15" fill="white" font-weight="900">!</text>
+            <text x="135" y="126" text-anchor="middle" font-family="sans-serif" font-size="28" fill="#D93025" font-weight="800">≠</text>
+            <text x="135" y="212" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#D93025" font-weight="600">Même sachet = doses totalement différentes</text>
+          </svg>
+        </div>
+        <div class="slide-content">
+          <div class="slide-step" style="color:var(--red)">Point 02 / 03</div>
+          <div class="slide-title">Pourquoi c'est dangereux</div>
+          <div class="slide-text">Composition <strong>change d'un sachet à l'autre</strong>. <strong>Impossible de savoir ce qu'on prend ni à quelle dose.</strong> Effets imprévisibles et bien plus forts.</div>
+        </div>
+      </div>
+
+      <div class="slide" id="sl-3">
+        <div class="slide-visual slide-3-bg">
+          <svg width="200" height="170" viewBox="0 0 270 230" fill="none">
+            <rect x="110" y="14" width="50" height="50" rx="10" fill="#BBDEFB"/>
+            <rect x="127" y="22" width="16" height="34" rx="5" fill="#1565C0" opacity="0.7"/>
+            <rect x="118" y="31" width="34" height="16" rx="5" fill="#1565C0" opacity="0.7"/>
+            <ellipse cx="135" cy="110" rx="18" ry="18" fill="#FFCCBC"/>
+            <rect x="78" y="124" width="114" height="30" rx="15" fill="#FFCCBC"/>
+            <polyline points="22,178 50,178 62,155 74,200 88,140 104,178 130,178 142,158 154,198 166,178 248,178" stroke="#D93025" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="16" y="82" width="62" height="22" rx="11" fill="#FFEBEE" stroke="#D93025" stroke-width="1"/>
+            <text x="47" y="97" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#D93025" font-weight="700">Convulsions</text>
+            <rect x="192" y="70" width="62" height="22" rx="11" fill="#FFEBEE" stroke="#D93025" stroke-width="1"/>
+            <text x="223" y="85" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#D93025" font-weight="700">Psychose</text>
+            <rect x="16" y="108" width="54" height="22" rx="11" fill="#FFEBEE" stroke="#D93025" stroke-width="1"/>
+            <text x="43" y="123" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#D93025" font-weight="700">Coma</text>
+            <text x="135" y="218" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1558B0" font-weight="600">Appeler le 15 immédiatement</text>
+          </svg>
+        </div>
+        <div class="slide-content">
+          <div class="slide-step" style="color:var(--blue)">Point 03 / 03</div>
+          <div class="slide-title">Aux urgences</div>
+          <div class="slide-text">Convulsions, cœur qui s'emballe, psychose, coma. <strong>Décès documentés en France.</strong> Aucun antidote disponible.</div>
+        </div>
+      </div>
+
+      <div class="slide-nav">
+        <button class="slide-btn" id="mb-prev" onclick="mSlide(-1)" disabled>← Préc.</button>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="slide-dots">
+            <button class="dot active" onclick="mGoSlide(0)"></button>
+            <button class="dot" onclick="mGoSlide(1)"></button>
+            <button class="dot" onclick="mGoSlide(2)"></button>
+          </div>
+          <span class="slide-counter" id="m-counter">1 / 3</span>
+        </div>
+        <button class="slide-btn" id="mb-next" onclick="mSlide(1)">Suiv. →</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Activité — Vrai ou Intox ?</div>
+    <div class="section-sublabel">Par groupes de 3, classez chaque affirmation. Touchez la carte pour voir la réponse.</div>
+
+    <div class="vf-card" onclick="mRevealVF(this,'faux')">
+      <div class="vf-statement">"Le cannabis de synthèse, c'est moins fort que le vrai cannabis."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">Il peut être jusqu'à 100 fois plus puissant. C'est une des idées reçues les plus dangereuses.</div></div>
+    </div>
+    <div class="vf-card" onclick="mRevealVF(this,'faux')">
+      <div class="vf-statement">"Si c'est vendu en boutique, c'est légal donc sans danger."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">Légal ne veut pas dire sans risque. Les formules changent constamment pour contourner la loi.</div></div>
+    </div>
+    <div class="vf-card" onclick="mRevealVF(this,'faux')">
+      <div class="vf-statement">"On peut voir à l'œil nu si le sachet est bien dosé."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">Le produit est pulvérisé de façon inégale. Impossible de deviner la dose à l'œil.</div></div>
+    </div>
+    <div class="vf-card" onclick="mRevealVF(this,'faux')">
+      <div class="vf-statement">"On ne peut pas devenir dépendant au cannabis de synthèse."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">La dépendance psychologique peut s'installer rapidement, avec un syndrome de manque à l'arrêt.</div></div>
+    </div>
+    <div class="vf-card" onclick="mRevealVF(this,'faux')">
+      <div class="vf-statement">"Si je consomme du PTC pour la première fois, je peux contrôler les effets et m'arrêter si ça se passe mal."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">Les effets peuvent devenir incontrôlables en quelques minutes — convulsions, perte de conscience. On ne peut pas "gérer" une intoxication au PTC.</div></div>
+    </div>
+    <div class="vf-card" onclick="mRevealVF(this,'faux')">
+      <div class="vf-statement">"Le cannabis de synthèse crée moins de dépendance que l'alcool ou le tabac."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">La dépendance peut s'installer très rapidement, parfois après quelques prises. Le sevrage est comparable à celui de l'alcool ou du tabac.</div></div>
+    </div>
+  </div>
+
+  <!-- PAGE 3 : MISE EN SITUATION -->
+  <div class="page" id="page-3" style="background:linear-gradient(160deg,#fff 50%,var(--green-bg) 100%);">
+    <div class="page-header">
+      <div class="page-eyebrow" style="color:var(--green)">Phase 3 · 11 – 19 min</div>
+      <div class="page-title">Que faire concrètement ?</div>
+      <div class="page-desc">Jeu de rôle sur scénario réel + discussion ouverte.</div>
+      <div class="pills-row">
+        <span class="pill pill-green">Jeu de rôle</span>
+        <span class="pill pill-green">Discussion</span>
+      </div>
+    </div>
+
+    <div class="scenario-box">
+      <div class="scenario-label-tag">Scénario — à lire ou jouer avec 2 volontaires</div>
+      <div class="scenario-text">"Vous êtes dans la cour du lycée. Votre camarade Lucas a fumé quelque chose qu'on lui a donné. Il devient de plus en plus agité, puis s'effondre. Il ne répond plus quand vous l'appelez."</div>
+      <div class="scenario-cta">→ Que faites-vous ? 2 minutes pour décider en groupe.</div>
+      <button class="reveal-btn" id="m-scenario-btn" onclick="mToggleScenario()">
+        <span id="m-scenario-icon">▶</span> Afficher la réponse animateur
+      </button>
+      <div class="scenario-answer" id="m-scenario-answer">
+        <div class="answer-header">Réponse animateur — après les 2 min</div>
+        <div class="answer-intro">Laisser 2–3 réponses sortir, puis recadrer :</div>
+        <div class="answer-body">
+          <div class="answer-title-q">"Voilà ce qu'il faut faire :"</div>
+          <div class="answer-p">La première chose, c'est d'appeler le <strong>15 — le SAMU</strong>. Pas un ami, pas un prof d'abord. Donnez votre localisation et ce qui a été consommé si vous le savez.</div>
+          <div class="answer-p">Si Lucas est inconscient, mettez-le en <strong>position latérale de sécurité</strong>. Et <strong>restez avec lui</strong> jusqu'aux secours.</div>
+          <div class="answer-danger">
+            <div class="answer-danger-label">CE QU'ON NE FAIT PAS :</div>
+            <div class="answer-danger-text">Pas de café, d'eau froide, pas de gifle. Ça n'aide pas et ça peut aggraver les choses.</div>
+          </div>
+          <div class="answer-p">"Si vous avez peur d'avoir des ennuis — <strong>dites-le quand même aux secours</strong>. Aucune sanction ne vaut une vie."</div>
+        </div>
+        <div class="answer-transition">
+          <div class="answer-transition-label">Pour enchaîner</div>
+          <div class="answer-transition-text">"Est-ce que vous saviez déjà tout ça ? Est-ce que quelqu'un a déjà vécu une situation comme ça ?"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Conduite à tenir</div>
+    <div class="steps-list">
+      <div class="step"><div class="step-n">1</div><div class="step-text"><strong>Appeler le 15 (SAMU)</strong> immédiatement. Donner sa localisation et ce qui a été consommé.</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-text"><strong>Rester avec lui</strong> — ne jamais le laisser seul.</div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-text"><strong>Position latérale de sécurité (PLS)</strong> s'il est inconscient.</div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-text"><strong>Signaler aux secours</strong> ce qui a été consommé — même si on a peur.</div></div>
+      <div class="step danger"><div class="step-n">✕</div><div class="step-text"><strong>Pas de café, eau froide, gifle</strong> — ça n'aide pas.</div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Discussion ouverte</div>
+    <div class="section-sublabel">Lancer ces questions, laisser le groupe répondre librement.</div>
+
+    <div class="disc-card">
+      <div class="disc-label">Question 1</div>
+      <div class="disc-q">"Pourquoi certains pensent que c'est moins risqué que le cannabis ?"</div>
+      <div class="disc-hint">Rappeler que "naturel" ≠ inoffensif et "synthèse" ≠ dosé.</div>
+    </div>
+    <div class="disc-card">
+      <div class="disc-label">Question 2</div>
+      <div class="disc-q">"Qu'est-ce qui pousse à en consommer ?"</div>
+      <div class="disc-hint">Curiosité, pression sociale, accessibilité… accueillir sans juger.</div>
+    </div>
+    <div class="disc-card">
+      <div class="disc-label">Question 3</div>
+      <div class="disc-q">"Où trouver de l'aide si on est concerné ?"</div>
+      <div class="disc-hint">Drogues Info Service, infirmier scolaire, médecin traitant, CSAPA.</div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 : CLÔTURE + RESSOURCES -->
+  <div class="page" id="page-4" style="background:linear-gradient(160deg,#fff 40%,var(--blue-bg) 100%);">
+    <div class="page-header">
+      <div class="page-eyebrow" style="color:var(--blue)">Phase 4 · 19 – 20 min</div>
+      <div class="page-title">Message à emporter</div>
+      <div class="page-desc">Tour de table express + distribution de la fiche récap.</div>
+      <div class="pills-row"><span class="pill pill-blue">Clôture active</span></div>
+    </div>
+
+    <div class="postit" style="background:var(--blue-bg);border-color:rgba(21,88,176,0.18);">
+      <div class="postit-num" style="color:var(--blue)">1</div>
+      <div class="postit-title">1 chose que je retiens</div>
+      <div class="postit-text">Chaque lycéen dit la chose la plus importante. Toutes les réponses sont valides.</div>
+    </div>
+    <div class="postit" style="background:var(--purple-bg);border-color:rgba(108,63,207,0.18);">
+      <div class="postit-num" style="color:var(--purple)">2</div>
+      <div class="postit-title">1 question que j'ai encore</div>
+      <div class="postit-text">Montrer que les questions sont normales. Orienter vers les ressources si besoin.</div>
+    </div>
+    <div class="postit" style="background:var(--green-bg);border-color:rgba(26,127,75,0.18);">
+      <div class="postit-num" style="color:var(--green)">→</div>
+      <div class="postit-title">Distribuer la fiche récap</div>
+      <div class="postit-text">Fiche recto/verso avec numéros utiles et QR code Drogues Info Service.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Ressources utiles</div>
+
+    <div class="ressource-main">
+      <div class="ressource-main-name">Drogues Info Service</div>
+      <div class="ressource-main-num">0 800 23 13 13</div>
+      <div class="ressource-main-sub">Gratuit · Anonyme · 7j/7 · 8h–2h · drogues-info-service.fr</div>
+    </div>
+
+    <div class="ressource-grid2">
+      <div class="ressource-card"><div class="ressource-name">SAMU</div><div class="ressource-num" style="color:var(--red)">15</div><div class="ressource-sub">Urgence médicale 24h/24</div></div>
+      <div class="ressource-card"><div class="ressource-name">Fil Santé Jeunes</div><div class="ressource-num" style="color:var(--purple)">0 800 235 236</div><div class="ressource-sub">Gratuit · 12–25 ans</div></div>
+      <div class="ressource-card"><div class="ressource-name">Prévention suicide</div><div class="ressource-num" style="color:var(--orange)">3114</div><div class="ressource-sub">National · 24h/24</div></div>
+      <div class="ressource-card"><div class="ressource-name">Addictions France</div><div class="ressource-num" style="color:var(--blue-light);font-size:14px;margin-top:4px;">addictions-france.org</div><div class="ressource-sub">CSAPA locaux</div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Matériel à préparer</div>
+    <div class="materiel-card"><div class="mat-icon" style="background:var(--purple-bg);">🃏</div><div><div class="mat-title">5 jeux de 8 cartes Vrai / Intox</div><div class="mat-sub">1 jeu par groupe de 3 élèves — imprimer et découper.</div></div></div>
+    <div class="materiel-card"><div class="mat-icon" style="background:var(--orange-bg);">📽️</div><div><div class="mat-title">Vidéoprojecteur</div><div class="mat-sub">Pour afficher le quiz et ce support pendant l'atelier.</div></div></div>
+    <div class="materiel-card"><div class="mat-icon" style="background:var(--green-bg);">📄</div><div><div class="mat-title">~15 fiches récap recto/verso</div><div class="mat-sub">À distribuer en fin d'atelier.</div></div></div>
+  </div>
+
+</div><!-- /pages -->
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <button class="nav-tab active" onclick="goPage(0)">
+    <div class="nav-tab-icon">🏠</div>
+    <div class="nav-tab-label">Accueil</div>
+  </button>
+  <button class="nav-tab" onclick="goPage(1)">
+    <div class="nav-tab-icon">❓</div>
+    <div class="nav-tab-label">Quiz</div>
+  </button>
+  <button class="nav-tab" onclick="goPage(2)">
+    <div class="nav-tab-icon">📖</div>
+    <div class="nav-tab-label">PTC</div>
+  </button>
+  <button class="nav-tab" onclick="goPage(3)">
+    <div class="nav-tab-icon">🎭</div>
+    <div class="nav-tab-label">Scénario</div>
+  </button>
+  <button class="nav-tab" onclick="goPage(4)">
+    <div class="nav-tab-icon">📋</div>
+    <div class="nav-tab-label">Clôture</div>
+  </button>
+</nav>
+
+<script>
+// ── Navigation ──
+const tabs = document.querySelectorAll('.nav-tab');
+
+function goPage(idx) {
+  document.querySelectorAll('.page').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.getElementById('pages').scrollTop = 0;
+}
+
+// ── Quiz ──
+function toggleQuiz(el) {
+  const r = el.querySelector('.quiz-reveal');
+  const h = el.querySelector('.quiz-hint');
+  r.classList.toggle('shown');
+  h.style.display = r.classList.contains('shown') ? 'none' : 'block';
+  el.style.background = r.classList.contains('shown') ? 'var(--purple-bg)' : '';
+  el.style.borderColor = r.classList.contains('shown') ? 'rgba(108,63,207,0.35)' : '';
+}
+
+// ── VF ──
+function mRevealVF(el, type) {
+  const isOpen = el.classList.contains('revealed');
+  const ab = el.querySelector('.vf-answer-block');
+  if (isOpen) {
+    el.classList.remove('revealed','is-vrai','is-faux');
+    ab.classList.remove('shown');
+  } else {
+    el.classList.add('revealed');
+    ab.classList.add('shown');
+    el.classList.add(type === 'vrai' ? 'is-vrai' : 'is-faux');
+  }
+}
+
+// ── Slideshow mobile ──
+let mCur = 0;
+const mSlides = document.querySelectorAll('.slideshow .slide');
+const mDots   = document.querySelectorAll('.slideshow .dot');
+
+function mGoSlide(idx) {
+  mSlides[mCur].classList.remove('active');
+  mDots[mCur].classList.remove('active');
+  mCur = idx;
+  mSlides[mCur].classList.add('active');
+  mDots[mCur].classList.add('active');
+  document.getElementById('m-counter').textContent = (mCur + 1) + ' / ' + mSlides.length;
+  document.getElementById('mb-prev').disabled = mCur === 0;
+  document.getElementById('mb-next').disabled = mCur === mSlides.length - 1;
+}
+function mSlide(dir) { mGoSlide(Math.max(0, Math.min(mSlides.length - 1, mCur + dir))); }
+
+// ── Scenario ──
+function mToggleScenario() {
+  const ans  = document.getElementById('m-scenario-answer');
+  const btn  = document.getElementById('m-scenario-btn');
+  const icon = document.getElementById('m-scenario-icon');
+  const open = ans.style.display !== 'none';
+  ans.style.display  = open ? 'none' : 'block';
+  icon.textContent   = open ? '▶' : '▼';
+  btn.style.background = open ? 'var(--green-bg)' : 'var(--green)';
+  btn.style.color      = open ? 'var(--green)' : '#fff';
+}
+</script>
+</body>
+</html>
