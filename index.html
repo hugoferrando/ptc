@@ -539,9 +539,9 @@ body::after {
       <div class="vf-statement">"Si je consomme du PTC pour la première fois, je peux contrôler les effets et m'arrêter si ça se passe mal."</div>
       <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">Les effets peuvent survenir en quelques minutes et devenir incontrôlables avant même qu'on réalise ce qui se passe — convulsions, perte de conscience. On ne peut pas "gérer" une intoxication au PTC.</div></div>
     </div>
-    <div class="vf-card" onclick="revealVF(this,'vrai')">
-      <div class="vf-statement">"On peut faire une overdose fatale avec du cannabis de synthèse."</div>
-      <div class="vf-answer-block"><span class="vf-badge badge-vrai">VRAI</span><div class="vf-expl">Des décès documentés en France. Les urgences voient régulièrement des cas graves. Aucun antidote disponible.</div></div>
+    <div class="vf-card" onclick="revealVF(this,'faux')">
+      <div class="vf-statement">"Le cannabis de synthèse crée moins de dépendance que l'alcool ou le tabac."</div>
+      <div class="vf-answer-block"><span class="vf-badge badge-faux">FAUX</span><div class="vf-expl">La dépendance au PTC peut s'installer très rapidement, parfois après quelques prises seulement. Le sevrage provoque de l'anxiété intense, des tremblements et des nausées — comme pour l'alcool ou le tabac.</div></div>
     </div>
   </div>
 </section>
@@ -568,6 +568,41 @@ body::after {
     <div class="scenario-label">Scénario — à lire ou jouer avec 2 volontaires</div>
     <div class="scenario-text">"Vous êtes dans la cour du lycée. Votre camarade Lucas a fumé quelque chose qu'on lui a donné. Il devient de plus en plus agité, puis s'effondre. Il ne répond plus quand vous l'appelez."</div>
     <div style="margin-top:16px;font-size:14px;color:var(--green);font-weight:500;">→ Que faites-vous ? 2 minutes pour décider en groupe.</div>
+
+    <!-- Bouton révéler réponse -->
+    <button class="scenario-reveal-btn" id="scenario-btn" onclick="toggleScenario()" style="margin-top:20px;display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:1.5px solid rgba(26,127,75,0.4);background:var(--green-bg);color:var(--green);cursor:pointer;transition:all 0.2s;">
+      <span id="scenario-btn-icon">▶</span> Afficher la réponse animateur
+    </button>
+
+    <div id="scenario-answer" style="display:none;margin-top:20px;border-top:1.5px dashed rgba(26,127,75,0.3);padding-top:20px;">
+
+      <div style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--green);margin-bottom:16px;">Réponse animateur — après les 2 min de discussion</div>
+
+      <div style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px;">
+        Laisser 2-3 réponses sortir du groupe, puis recadrer :
+      </div>
+
+      <div style="background:#fff;border-radius:12px;border:1px solid rgba(26,127,75,0.2);padding:22px 24px;font-size:14px;line-height:1.85;color:var(--text);">
+        <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--green);margin-bottom:14px;">"Voilà ce qu'il faut faire dans cette situation :"</div>
+
+        <p style="margin-bottom:14px;color:var(--muted);">"La première chose, c'est d'appeler le <strong style="color:var(--text);">15 — le SAMU</strong>. Pas un ami, pas un prof d'abord — le 15 en premier. Vous leur dites où vous êtes, comment il se comporte, et si vous savez ce qu'il a consommé, vous le dites. Les secours ne sont pas là pour vous juger, ils ont besoin de cette info pour bien intervenir."</p>
+
+        <p style="margin-bottom:14px;color:var(--muted);">"En attendant qu'ils arrivent, si Lucas est inconscient, vous le mettez en <strong style="color:var(--text);">position latérale de sécurité</strong> — sur le côté — pour qu'il ne s'étouffe pas. Et vous <strong style="color:var(--text);">restez avec lui</strong>, vous ne le laissez pas seul."</p>
+
+        <div style="background:var(--red-bg);border-radius:8px;border:1px solid rgba(217,48,37,0.2);padding:14px 18px;margin-bottom:14px;">
+          <span style="font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--red);letter-spacing:0.08em;">CE QU'ON NE FAIT PAS :</span><br>
+          <span style="font-size:13px;color:var(--muted);line-height:1.7;">On ne le secoue pas, on ne lui donne pas de café ou d'eau froide, on ne lui met pas de gifle. Ça n'aide pas et ça peut aggraver les choses.</span>
+        </div>
+
+        <p style="color:var(--muted);">"Et si vous avez peur d'avoir des ennuis parce que vous étiez là — <strong style="color:var(--text);">dites-le quand même aux secours</strong>. Votre ami est en danger de mort potentiel. Aucune sanction ne vaut une vie."</p>
+      </div>
+
+      <div style="margin-top:16px;background:var(--purple-bg);border-radius:10px;border:1px solid rgba(108,63,207,0.2);padding:14px 18px;">
+        <span style="font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--purple);letter-spacing:0.1em;text-transform:uppercase;">Pour enchaîner sur la discussion</span><br>
+        <span style="font-size:13px;color:var(--muted);line-height:1.7;">"Est-ce que vous saviez déjà tout ça ? Est-ce que quelqu'un a déjà vécu une situation comme ça ?"</span>
+      </div>
+
+    </div>
   </div>
   <div class="divider"></div>
   <h3 style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:16px;">Conduite à tenir — à valider ensemble</h3>
@@ -718,6 +753,19 @@ function goSlide(idx) {
 }
 
 function changeSlide(dir) { goSlide(Math.max(0, Math.min(slides.length - 1, cur + dir))); }
+
+// Scenario toggle
+function toggleScenario() {
+  const answer = document.getElementById('scenario-answer');
+  const btn    = document.getElementById('scenario-btn');
+  const icon   = document.getElementById('scenario-btn-icon');
+  const isOpen = answer.style.display !== 'none';
+  answer.style.display = isOpen ? 'none' : 'block';
+  icon.textContent     = isOpen ? '▶' : '▼';
+  btn.style.background = isOpen ? 'var(--green-bg)' : 'var(--green)';
+  btn.style.color      = isOpen ? 'var(--green)'    : '#fff';
+  btn.style.borderColor= isOpen ? 'rgba(26,127,75,0.4)' : 'var(--green)';
+}
 </script>
 </body>
 </html>
